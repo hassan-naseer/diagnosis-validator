@@ -14,7 +14,7 @@ public class SubcategoryService {
 
     @PostConstruct
     public void initializeSubcategories() {
-        System.out.println("🔹 Initializing comprehensive subcategories...");
+        System.out.println("Loading subcategories...");
         
         // Load all chapters
         loadChapterA_InfectiousAndParasiticDiseases();
@@ -38,7 +38,7 @@ public class SubcategoryService {
         loadChapterV_Y_ExternalCauses();
         loadChapterZ_HealthStatus();
         
-        System.out.println("Loaded " + subcategories.size() + " subcategory definitions across all chapters");
+        System.out.println("Loaded " + subcategories.size() + " subcategory definitions");
     }
 
         // CHAPTER A: Infectious and Parasitic Diseases (A00-B99)

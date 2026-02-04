@@ -15,12 +15,9 @@ public class DiseaseCategoryService {
     
     @PostConstruct
     public void initializeCategories() {
-        System.out.println("Initializing ICD-10 disease categories...");
+        System.out.println("loading ICD-10 disease categories...");
         loadAllCategories();
         System.out.println("Loaded " + diseaseCategories.size() + " disease categories");
-
-        // Calling the test
-        testCategories();
     }
     
     private void loadAllCategories() {
@@ -346,30 +343,4 @@ public class DiseaseCategoryService {
     public List<CodeRange> getAllCategories() {
         return diseaseCategories;
     }
-
-
-
-    // for Testing
-    public void testCategories() {
-    System.out.println("\n🧪 === TESTING DISEASE CATEGORIES ===");
-    
-    String[] testCodes = {
-        "E11.65",   // Should be: Diabetes mellitus
-        "I10",      // Should be: Hypertensive diseases  
-        "J44.0",    // Should be: Chronic lower respiratory diseases
-        "C50.911",  // Should be: Malignant neoplasms of breast
-        "M79.3",    // Should be: Other soft tissue disorders
-        "A00.1"     // Should be: Intestinal infectious diseases
-    };
-    
-    for (String code : testCodes) {
-        CodeRange category = getCategoryForCode(code);
-        if (category != null) {
-            System.out.println(code + " → " + category.getCategory() + " (" + category.getChapter() + ")");
-        } else {
-            System.out.println(code + " → NOT FOUND");
-        }
-    }
-    System.out.println("=====================================\n");
-}
 }

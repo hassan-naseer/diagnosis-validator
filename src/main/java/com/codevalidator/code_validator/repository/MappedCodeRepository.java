@@ -16,8 +16,8 @@ public interface MappedCodeRepository extends JpaRepository<MappedCode, Long> {
     List<MappedCode> findByIsValid(Boolean isValid);
 
 
-    // NEW METHODS FOR SUBCATEGORIES
-    List<MappedCode> findBySubcategory(String subcategory);
-    List<MappedCode> findBySubcategoryLevel2(String subcategoryLevel2);
-    List<MappedCode> findByDiseaseCategoryAndSubcategory(String diseaseCategory, String subcategory);
+    // // NEW METHODS FOR SUBCATEGORIES
+    // List<MappedCode> findBySubcategory(String subcategory);
+    // List<MappedCode> findBySubcategoryLevel2(String subcategoryLevel2);
+    // List<MappedCode> findByDiseaseCategoryAndSubcategory(String diseaseCategory, String subcategory);
 }

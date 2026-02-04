@@ -43,85 +43,29 @@ public class DiagnosisController {
         return mappedCodeRepository.findAll();
     }
     
-    // Get codes by category
-    @GetMapping("/category/{category}")
-    public List<MappedCode> getCodesByCategory(@PathVariable String category) {
-        return mappedCodeRepository.findByDiseaseCategory(category);
-    }
+    // // Get codes by category
+    // @GetMapping("/category/{category}")
+    // public List<MappedCode> getCodesByCategory(@PathVariable String category) {
+    //     return mappedCodeRepository.findByDiseaseCategory(category);
+    // }
     
-    // Get summary statistics
-    @GetMapping("/stats")
-    public Map<String, Object> getStats() {
-        List<MappedCode> allCodes = mappedCodeRepository.findAll();
+    // // Get summary statistics
+    // @GetMapping("/stats")
+    // public Map<String, Object> getStats() {
+    //     List<MappedCode> allCodes = mappedCodeRepository.findAll();
         
-        Map<String, Long> categoryCount = allCodes.stream()
-            .collect(Collectors.groupingBy(
-                MappedCode::getDiseaseCategory,
-                Collectors.counting()
-            ));
+    //     Map<String, Long> categoryCount = allCodes.stream()
+    //         .collect(Collectors.groupingBy(
+    //             MappedCode::getDiseaseCategory,
+    //             Collectors.counting()
+    //         ));
         
-        return Map.of(
-            "totalCodes", allCodes.size(),
-            "categoriesCount", categoryCount.size(),
-            "byCategory", categoryCount
-        );
-    }
-
-// Get codes by subcategory
-@GetMapping("/subcategory/{subcategory}")
-public List<MappedCode> getCodesBySubcategory(@PathVariable String subcategory) {
-    return mappedCodeRepository.findBySubcategory(subcategory);
-}
-
-// Get codes by level 2 subcategory
-@GetMapping("/subcategory-level2/{subcategoryLevel2}")
-public List<MappedCode> getCodesBySubcategoryLevel2(@PathVariable String subcategoryLevel2) {
-    return mappedCodeRepository.findBySubcategoryLevel2(subcategoryLevel2);
-}
-
-// Get hierarchical view
-@GetMapping("/hierarchy")
-public Map<String, Object> getHierarchy() {
-    List<MappedCode> allCodes = mappedCodeRepository.findAll();
-    
-    Map<String, Map<String, Map<String, List<MappedCode>>>> hierarchy = new java.util.LinkedHashMap<>();
-    
-    for (MappedCode code : allCodes) {
-        String category = code.getDiseaseCategory();
-        String subcat = code.getSubcategory() != null ? code.getSubcategory() : "Uncategorized";
-        String level2 = code.getSubcategoryLevel2() != null ? code.getSubcategoryLevel2() : "General";
-        
-        hierarchy
-            .computeIfAbsent(category, k -> new java.util.LinkedHashMap<>())
-            .computeIfAbsent(subcat, k -> new java.util.LinkedHashMap<>())
-            .computeIfAbsent(level2, k -> new ArrayList<>())
-            .add(code);
-    }
-    
-    // Convert to summary format
-    Map<String, Object> summary = new java.util.LinkedHashMap<>();
-    
-    for (Map.Entry<String, Map<String, Map<String, List<MappedCode>>>> catEntry : hierarchy.entrySet()) {
-        Map<String, Object> subcatMap = new java.util.LinkedHashMap<>();
-        
-        for (Map.Entry<String, Map<String, List<MappedCode>>> subEntry : catEntry.getValue().entrySet()) {
-            Map<String, Integer> level2Map = new java.util.LinkedHashMap<>();
-            
-            for (Map.Entry<String, List<MappedCode>> level2Entry : subEntry.getValue().entrySet()) {
-                level2Map.put(level2Entry.getKey(), level2Entry.getValue().size());
-            }
-            
-            subcatMap.put(subEntry.getKey(), level2Map);
-        }
-        
-        summary.put(catEntry.getKey(), subcatMap);
-    }
-    
-    return Map.of(
-        "totalCategories", hierarchy.size(),
-        "hierarchy", summary
-    );
-}
+    //     return Map.of(
+    //         "totalCodes", allCodes.size(),
+    //         "categoriesCount", categoryCount.size(),
+    //         "byCategory", categoryCount
+    //     );
+    // }
 
         // Get detailed stats with subcategories
         @GetMapping("/stats/detailed")

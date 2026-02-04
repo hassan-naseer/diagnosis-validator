@@ -48,9 +48,6 @@ public class ReferenceDataService {
         System.out.println("Loading ICD-10 reference data...");
         loadIcd10Codes();
         System.out.println("Loaded " + icd10Codes.size() + " ICD-10 codes");
-
-        generateCategoryReport();
-
         saveMappedCodesToDatabase();
     }
     
@@ -124,53 +121,6 @@ public class ReferenceDataService {
         return refCode != null && refCode.isDiabetes();
     }
 
-
-    // Map all reference codes to disease categories
-    public void generateCategoryReport() {
-    System.out.println("\n === CATEGORY MAPPING REPORT ===");
-    System.out.println("Analyzing " + icd10Codes.size() + " reference codes...\n");
-            
-        // Group codes by category
-        Map<String, List<String>> categoryMap = new HashMap<>();
-        int unmappedCount = 0;
-            
-        for (String code : icd10Codes.keySet()) {
-            CodeRange category = diseaseCategoryService.getCategoryForCode(code);
-                
-            if (category != null) {
-                   String categoryName = category.getCategory();
-                categoryMap.putIfAbsent(categoryName, new ArrayList<>());
-                categoryMap.get(categoryName).add(code);
-            } else {
-                unmappedCount++;
-            }
-        }
-            
-        // Sort categories by number of codes (descending)
-        categoryMap.entrySet().stream()
-            .sorted((e1, e2) -> Integer.compare(e2.getValue().size(), e1.getValue().size()))
-            .forEach(entry -> {
-                String categoryName = entry.getKey();
-                List<String> codes = entry.getValue();
-                    
-                System.out.println("📁 " + categoryName + ": " + codes.size() + " codes");
-                    
-                // Show first 5 codes as examples
-                int showCount = Math.min(5, codes.size());
-                for (int i = 0; i < showCount; i++) {
-                    System.out.println("   - " + codes.get(i));
-                }
-                if (codes.size() > 5) {
-                    System.out.println("   ... and " + (codes.size() - 5) + " more");
-                }
-                System.out.println();
-            });
-            
-        System.out.println("Successfully mapped: " + (icd10Codes.size() - unmappedCount) + " codes");
-        System.out.println("Unmapped codes: " + unmappedCount);
-        System.out.println("=====================================\n");
-
-    }
     
     // Save all mapped codes to database
     public void saveMappedCodesToDatabase() {
@@ -216,12 +166,8 @@ public class ReferenceDataService {
             mappedCodeRepository.save(mappedCode);
             savedCount++;
         }
-            
-            System.out.println("Saved " + savedCount + " codes to database");
-            System.out.println("View in H2 Console: http://localhost:8080/h2-console");
-            System.out.println("   JDBC URL: jdbc:h2:mem:diagnosisdb");
-            System.out.println("   Username: sa");
-            System.out.println("   Password: (leave empty)\n");
-        }
+
+        System.out.println("Successfully saved " + savedCount + " codes");
+    }
 
 }
