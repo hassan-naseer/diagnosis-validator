@@ -8,6 +8,7 @@ import com.codevalidator.code_validator.repository.MappedCodeRepository;
 
 import org.springframework.stereotype.Service;
 import org.apache.commons.collections4.Get;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import jakarta.annotation.PostConstruct;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.codevalidator.code_validator.model.MappedCode;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Service
@@ -33,6 +35,8 @@ public class ReferenceDataService {
 
     private final SubcategoryService subcategoryService;
 
+    private Icd9Service icd9Service;
+
     //UPDATE CONSTRUCTOR to include repository
     public ReferenceDataService(DiseaseCategoryService diseaseCategoryService,
                                 MappedCodeRepository mappedCodeRepository,
@@ -41,6 +45,14 @@ public class ReferenceDataService {
         this.mappedCodeRepository = mappedCodeRepository;
         this.subcategoryService = subcategoryService;
     }
+
+    // ⭐ ADD THIS SETTER (Spring will inject it)
+    @Autowired(required = false)
+    public void setIcd9Service(Icd9Service icd9Service) {
+        this.icd9Service = icd9Service;
+    }
+
+
 
     // Runs automatically when Spring Boot starts
     @PostConstruct
@@ -159,7 +171,8 @@ public class ReferenceDataService {
                 category != null ? category.getChapter() : "Unknown",
                 subcategoryName,
                 subcategoryLevel2,
-                true  // Valid because it's from official CMS data
+                true,  // Valid because it's from official CMS data
+                "REFERENCE_DATA"
             );
                 
             // Save to database
@@ -168,6 +181,22 @@ public class ReferenceDataService {
         }
 
         System.out.println("Successfully saved " + savedCount + " codes");
+
+        System.out.println("Triggering ICD-9 code loading...");
+        if (icd9Service != null) {
+            icd9Service.loadIcd9Codes();
+        }
+
+
+        // ADD THESE LINES - Force GV initialization AFTER codes are saved
+        System.out.println("Triggering Global Variable initialization...");
+        try {
+            // Small delay to ensure database commits
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }        
     }
+
 
 }

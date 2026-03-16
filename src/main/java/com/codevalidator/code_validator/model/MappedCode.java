@@ -49,11 +49,16 @@ public class MappedCode {
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+
+    @Column(name = "mapping_method", length = 50)
+    private String mappingMethod;  // "EXACT", "TRAILING_ZERO", "GEMS"
     
     // Constructor for easy creation
     public MappedCode(String code, String formattedCode, String description, 
                       String codeSystem, String diseaseCategory, String chapter, String subcategory, String subcategoryLevel2,
-                      Boolean isValid) {
+                      Boolean isValid,
+                      String mappingMethod) {
         this.code = code;
         this.formattedCode = formattedCode;
         this.description = description;
@@ -63,6 +68,15 @@ public class MappedCode {
         this.subcategory = subcategory;
         this.subcategoryLevel2 = subcategoryLevel2;
         this.isValid = isValid;
+        this.mappingMethod = mappingMethod;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public String getMappingMethod() {
+        return mappingMethod;
+    }
+    
+    public void setMappingMethod(String mappingMethod) {
+        this.mappingMethod = mappingMethod;
     }
 }
